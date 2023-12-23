@@ -1,0 +1,19 @@
+#!/bin/bash
+# Convert all images in a directory to PNGs
+
+dir="/home/alex/Pictures/Terminal"
+files=("$dir"/*)
+
+for path in "${files[@]}"; do
+	file="${path##*/}"
+	name=${file%.*}
+	ext="${file##*.}"
+	
+	case $ext in
+		jpg | jpeg)
+			convert $path "$dir/$name.png"
+			echo "Created $name.png"
+			rm $path
+			;;
+	esac
+done
