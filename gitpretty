@@ -1,0 +1,42 @@
+#!/bin/bash
+
+declare -a ignores
+ignore_next=false
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    if $ignore_next; then
+        if [[ $key != --* ]]; then
+            ignores+=("-e" "$key")  # Add ignore pattern to array
+            shift
+            continue
+        else
+            ignore_next=false
+        fi
+    fi
+
+    case $key in
+        -i|--ignore)
+            ignore_next=true
+            ;;
+        *)   
+            ;;
+    esac
+    shift
+done
+
+NEWLINE=$'\n'
+dir=$(git rev-parse --show-toplevel)
+files=$(git ls-files | grep -v -e ".gitignore" "${ignores[@]}")
+
+output=""
+
+while IFS= read -r name; do
+	output+="FILE: $name$NEWLINE"
+	output+="-------------------$NEWLINE"
+	output+=$(<"$dir/$name")
+	output+="$NEWLINE$NEWLINE"
+done <<< $files
+
+echo "$output"
