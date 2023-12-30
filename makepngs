@@ -1,7 +1,17 @@
 #!/bin/bash
 # Convert all images in a directory to PNGs
 
-dir="/home/alex/Pictures/Terminal"
+dir=""
+if [ $# -ge 1 ]; then
+	dir="$1"
+	if not test -d $dir; then 
+		echo "Invalid path passed"
+		return
+	fi
+else
+	dir="$(pwd)"
+fi
+
 files=("$dir"/*)
 
 for path in "${files[@]}"; do
